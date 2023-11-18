@@ -1,5 +1,27 @@
 import mysql.connector
 from tkinter import *
+from hashlib import hash_password, generate_salt
+
+def check_username_in_database(username):
+    # Подключение к базе данных
+    connection = mysql.connector.connect(
+        host="141.8.192.151",
+        user="f0878880_VaniVl",
+        password="228338ljv",
+        database="f0878880_massager"
+    )
+
+    # Создаем объект cursor для выполнения SQL-запросов
+    cursor = connection.cursor()
+
+    # SQL-запрос для проверки наличия пользователя с таким именем
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    existing_user = cursor.fetchone()
+
+    # Закрываем соединение
+    connection.close()
+
+    return existing_user is not None
 
 def save_to_database():
     # Получаем данные из полей формы
@@ -11,6 +33,11 @@ def save_to_database():
         save_button.config(text="Пароль должен быть больше 6 символов")
         return
 
+    # Проверка наличия пользователя с таким именем
+    if check_username_in_database(username):
+        save_button.config(text="Имя пользователя занято")
+        return
+    
     # Подключение к базе данных
     connection = mysql.connector.connect(
         host="141.8.192.151",
@@ -41,10 +68,7 @@ def save_to_database():
         password_entry.delete(0, END)
 
     except mysql.connector.IntegrityError as e:
-        if "Duplicate entry" in str(e):
-            save_button.config(text="Имя пользователя занято")
-        else:
-            save_button.config(text="Ошибка регистрации")
+        save_button.config(text="Ошибка регистрации")
 
     finally:
         # Закрываем соединение
