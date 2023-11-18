@@ -1,3 +1,8 @@
 {
-    "dotnet.defaultSolution": "test.sln"
+    "dotnet.defaultSolution": "test.sln",
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
