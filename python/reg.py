@@ -117,20 +117,39 @@ root = Tk()
 root.title("Регистрация")
 
 # Создаем метки и поля для ввода данных
-username_label = Label(root, text="Имя пользователя:")
-username_label.pack()
-username_entry = Entry(root)
+username_var = StringVar()
+username_var.set("Имя пользователя")
+username_entry = Entry(root, textvariable=username_var)
 username_entry.pack()
 
-password_label = Label(root, text="Пароль:")
-password_label.pack()
-password_entry = Entry(root, show="*")
+password_var = StringVar()
+password_var.set("Пароль")
+password_entry = Entry(root, show="*", textvariable=password_var)
 password_entry.pack()
 
-email_label = Label(root, text="Электронная почта:")
-email_label.pack()
-email_entry = Entry(root)
+email_var = StringVar()
+email_var.set("Электронная почта")
+email_entry = Entry(root, textvariable=email_var)
 email_entry.pack()
+
+# Функции для очистки и восстановления текста
+def clear_placeholder(event, entry, placeholder):
+    if entry.get() == placeholder:
+        entry.delete(0, END)
+
+def restore_placeholder(event, entry, placeholder):
+    if not entry.get():
+        entry.insert(0, placeholder)
+
+# Привязываем функции к событиям фокуса
+email_entry.bind("<FocusIn>", lambda event: clear_placeholder(event, email_entry, "Электронная почта"))
+email_entry.bind("<FocusOut>", lambda event: restore_placeholder(event, email_entry, "Электронная почта"))
+
+password_entry.bind("<FocusIn>", lambda event: clear_placeholder(event, password_entry, "Пароль"))
+password_entry.bind("<FocusOut>", lambda event: restore_placeholder(event, password_entry, "Пароль"))
+
+username_entry.bind("<FocusIn>", lambda event: clear_placeholder(event, username_entry, "Имя пользователя"))
+username_entry.bind("<FocusOut>", lambda event: restore_placeholder(event, username_entry, "Имя пользователя"))
 
 # Кнопка для сохранения данных
 save_button = Button(root, text="Зарегистрироваться", command=save_to_database)

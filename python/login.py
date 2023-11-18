@@ -45,15 +45,31 @@ root = Tk()
 root.title("Вход в учетную запись")
 
 # Создаем метки и поля для ввода данных
-email_label = Label(root, text="Электронная почта:")
-email_label.pack()
-email_entry = Entry(root)
+email_var = StringVar()
+email_var.set("Электронная почта")
+email_entry = Entry(root, textvariable=email_var)
 email_entry.pack()
 
-password_label = Label(root, text="Пароль:")
-password_label.pack()
-password_entry = Entry(root, show="*")
+password_var = StringVar()
+password_var.set("Пароль")
+password_entry = Entry(root, show="*", textvariable=password_var)
 password_entry.pack()
+
+# Функции для очистки и восстановления текста
+def clear_placeholder(event, entry, placeholder):
+    if entry.get() == placeholder:
+        entry.delete(0, END)
+
+def restore_placeholder(event, entry, placeholder):
+    if not entry.get():
+        entry.insert(0, placeholder)
+
+# Привязываем функции к событиям фокуса
+email_entry.bind("<FocusIn>", lambda event: clear_placeholder(event, email_entry, "Электронная почта"))
+email_entry.bind("<FocusOut>", lambda event: restore_placeholder(event, email_entry, "Электронная почта"))
+
+password_entry.bind("<FocusIn>", lambda event: clear_placeholder(event, password_entry, "Пароль"))
+password_entry.bind("<FocusOut>", lambda event: restore_placeholder(event, password_entry, "Пароль"))
 
 # Кнопка для входа
 login_button = Button(root, text="Войти", command=login)
