@@ -2,6 +2,8 @@ import mysql.connector
 from tkinter import *
 import hashlib
 import re
+import BCoffers
+import Chypher
 
 def check_username_in_database(username):
     # Подключение к базе данных
@@ -74,6 +76,8 @@ def save_to_database():
     if not re.match(email_pattern, email):
         save_button.config(text="Некорректный адрес электронной почты")
         return
+    
+    
 
     # Подключеие к базе данных
     connection = mysql.connector.connect(
@@ -87,9 +91,20 @@ def save_to_database():
     cursor = connection.cursor()
 
     try:
+        # Генерация приватного и публичного ключа для профиля
+        key = BCoffers.gen_keys(username)
+
+        # Сохранение частного ключа на устройстве с его шифрованием
+        private_key = key["private_key"]
+        hesh_key = Chypher.encrypt(private_key, password)
+        with open('key.txt', 'w') as file:
+             file.write(str(hesh_key))
+        file.close()
+
+
         # SQL-запрос для вставки данных
-        sql = "INSERT INTO users (username, password, email) VALUES (%s, %s, %s)"
-        data = (username, hashed_password, email)
+        sql = "INSERT INTO users (username, password, email, pub_key) VALUES (%s, %s, %s, %s)"
+        data = (username, hashed_password, email, key["address"])
 
         # Выполняем запрос
         cursor.execute(sql, data)

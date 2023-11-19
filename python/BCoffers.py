@@ -40,7 +40,6 @@ def remittance(Radd, Pkey, amount):
     print(web3.eth.get_transaction_receipt(txn_hash))
     return txn_hash.hex(), web3.eth.get_transaction_receipt(txn_hash)
 def gen_keys(name): #принимает значение имени профиля и возвращает публичный и приватный ключ
-    list_of_dicts = []
     account = web3.eth.account.create() # генерируем новые ключи и после присваиваем их переменным
     address = account.address
     private_key = account.key.hex()
@@ -50,11 +49,7 @@ def gen_keys(name): #принимает значение имени профил
             'Private_key:', private_key, '\n',
             '--------------------------')
 
-    dictionary = dict()
-    dictionary['address'] = address
-    dictionary['private_key'] = private_key
-
-    list_of_dicts.append(dictionary)
+    list_of_dicts = {"address": address, "private_key": private_key}
     return list_of_dicts 
 def checkGasPrice():
     print(f"gas price: {web3.eth.gas_price} BNB")  # кол-во Wei за единицу газа
